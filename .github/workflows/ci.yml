@@ -1,0 +1,20 @@
+# Boilerplate workflow to check and test the project PRs
+# Requires changes as project develops
+
+name: CI
+
+on:
+    push:
+        branches:
+        - main
+    pull_request:
+        types: [opened, synchronize, reopened, closed]
+        branches:
+        - main
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      is_main_branch: ${{ github.ref == 'refs/heads/main' }}
+      is_public_fork: ${{ github.event.pull_request.head.repo.fork }}
+    secrets: inherit

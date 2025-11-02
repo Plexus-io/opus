@@ -1,0 +1,44 @@
+# Boilerplate workflow to build the project using Maven
+# Requires changes as project develops
+
+name: checks and test
+
+on:
+  workflow_call:
+    inputs:
+      is_main_branch:
+        description: "Is this the main branch build?"
+        default: true
+        type: boolean
+
+      is_public_fork:
+        description: "Is this a public fork build?"
+        default: true
+        type: boolean
+
+jobs:
+    build:
+      name: Build
+      runs-on: ubuntu-latest
+      env:
+        working-directory: ./
+      defaults:
+        run:
+          working-directory: ${{ env.working-directory }}
+      steps:
+        - uses: actions/checkout@v4
+
+        - name: Setup Java 21
+          uses: actions/setup-java@v4
+          with:
+            java-version: '21'
+            distribution: 'temurin'
+            cache: 'maven'
+
+        - name: Build with Maven
+          run: mvn -ntp verify
+
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v5
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_ORG_TOKEN }}
