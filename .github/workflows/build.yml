@@ -40,5 +40,10 @@ jobs:
 
         - name: Upload coverage to Codecov
           uses: codecov/codecov-action@v5
+          with:
+            files: core/target/jacoco-report/jacoco.xml
+            flags: backend
+            name: "jacoco-aggregate"
+            fail_ci_if_error: true
           env:
             CODECOV_TOKEN: ${{ secrets.CODECOV_ORG_TOKEN }}
