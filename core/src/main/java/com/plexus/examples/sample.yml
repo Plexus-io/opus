@@ -1,0 +1,13 @@
+project:
+namespace: com.plexus.examples
+
+actions:
+  - name: cron
+    type: cron
+    schedule: "0 0 * * *"
+
+tasks:
+  - name: sampleTask
+    type: http_request
+    method: GET
+    url: "https://api.example.com/data"

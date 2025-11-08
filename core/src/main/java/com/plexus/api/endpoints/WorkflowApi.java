@@ -1,0 +1,35 @@
+package com.plexus.api.endpoints;
+
+import com.plexus.parser.Parser;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+@Path("/api/workflow")
+public class WorkflowApi {
+
+  private final Application application;
+  private static final Logger log = LogManager.getLogger(WorkflowApi.class);
+
+  @Inject
+  public WorkflowApi(Application application) {
+    this.application = application;
+  }
+
+  @POST
+  @Path("/create")
+  // 👇 FIX: Add the standard YAML types
+  @Consumes({"application/yaml", "text/yaml", "application/x-yaml"})
+  @Produces(MediaType.TEXT_PLAIN)
+  public String createWorkflow(Parser parser) {
+    log.info("Creating workflow");
+
+    return "Workflow '" + parser.workflow.getProjectName() + "' processed successfully!";
+  }
+}

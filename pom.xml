@@ -4,6 +4,9 @@
     <groupId>com.plexus</groupId>
     <artifactId>opus-app</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>core</module>
+    </modules>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
