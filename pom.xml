@@ -7,7 +7,6 @@
 
     <modules>
         <module>core</module>
-        <module>coverage-report</module>
     </modules>
 
     <version>0.0.1-SNAPSHOT</version>
