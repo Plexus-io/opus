@@ -16,10 +16,18 @@
         <java.version>21</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <spotless-maven-plugin.version>3.0.0</spotless-maven-plugin.version>
+        <quarkus.platform.version>3.27.0</quarkus.platform.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-jacoco</artifactId>
@@ -40,6 +48,11 @@
     <build>
             <pluginManagement>
                 <plugins>
+                    <plugin>
+                        <groupId>io.quarkus.platform</groupId>
+                        <artifactId>quarkus-maven-plugin</artifactId>
+                        <version>${quarkus.platform.version}</version>
+                    </plugin>
                     <plugin>
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs-maven-plugin</artifactId>
