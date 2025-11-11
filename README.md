@@ -54,7 +54,7 @@ You need to have [Java 21](https://adoptium.net/temurin/releases/?arch=any&versi
 <!-- Prerequisites -->
 ### Prerequisites
 
-This project uses [Quarkus](https://quarkus.io/) with [Maven](https://maven.apache.org/).
+This project uses [Quarkus 3.27 LTS](https://quarkus.io/blog/quarkus-3-27-released/) with [Maven](https://maven.apache.org/).
 
 ### Run project in development mode ###
     mvn quarkus:dev
