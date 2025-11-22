@@ -2,36 +2,73 @@ package com.plexus.api.endpoints;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.EncoderConfig.encoderConfig;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
+import io.restassured.response.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
 class WorkflowApiTest {
 
+  private static final Logger log = LogManager.getLogger(WorkflowApiTest.class);
+
+  //  TODO
+  //  format below yaml
   String yamlBody =
-      "workflow:\n"
-          + "  projectId: \"123e4567-e89b-12d3-a456-426614174000\"\n"
-          + "  projectName: \"Sample Workflow\"\n"
-          + "  projectNamespace: \"com.plexus.sample\"\n"
-          + "  tasks:\n"
-          + "    - id: \"223e4567-e89b-12d3-a456-426614174001\"\n"
-          + "      taskName: \"Task One\"\n"
-          + "      taskType: \"TypeA\"\n"
-          + "      taskEvent: \"EventA\"\n"
-          + "      taskMethod: \"MethodA\"\n"
-          + "      onFailure: \"Retry\"\n"
-          + "      retry: \"3\"\n"
-          + "    - id: \"323e4567-e89b-12d3-a456-426614174002\"\n"
-          + "      taskName: \"Task Two\"\n"
-          + "      taskType: \"TypeB\"\n"
-          + "      taskEvent: \"EventB\"\n"
-          + "      taskMethod: \"MethodB\"\n"
-          + "      onFailure: \"Abort\"\n"
-          + "      retry: \"0\"\n";
+      """
+              workflow:
+                                         projectId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b11"
+                                         projectName: "Sample Workflow"
+                                         projectNamespace: "sample_workflow"
+                                         tasks:
+                                           - taskId: "223e4567-e89b-12d3-a456-426614174001"
+                                             workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                             taskName: "Task One"
+                                             taskType: "TypeA"
+                                           - taskId: "323e4567-e89b-12d3-a456-426614174002"
+                                             workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                             taskName: "Task Two"
+                                             taskType: "TypeB"
+      """;
+  String yamlBody1 =
+      """
+                  workflow:
+                                             projectId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b11"
+                                             projectName: "Sample Workflow"
+                                             projectNamespace: "sample_workflow"
+                                             tasks:
+                                               - taskId: "223e4567-e89b-12d3-a456-426614174003"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task One"
+                                                 taskType: "TypeA"
+                                               - taskId: "323e4567-e89b-12d3-a456-426614174004"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task Two"
+                                                 taskType: "TypeB"
+          """;
+  String yamlBody2 =
+      """
+                  workflow:
+                                             projectId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b11"
+                                             projectName: "Sample Workflow"
+                                             projectNamespace: "sample_workflow"
+                                             tasks:
+                                               - taskId: "223e4567-e89b-12d3-a456-426614174005"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task One"
+                                                 taskType: "TypeA"
+                                               - taskId: "323e4567-e89b-12d3-a456-426614174006"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task Two"
+                                                 taskType: "TypeB"
+          """;
 
   @BeforeEach
   void setupRestAssured() {
@@ -68,7 +105,7 @@ class WorkflowApiTest {
     String response =
         given()
             .header("Content-Type", "application/x-yaml")
-            .body(yamlBody)
+            .body(yamlBody1)
             .when()
             .post("/api/workflow/create")
             .then()
@@ -76,6 +113,44 @@ class WorkflowApiTest {
             .extract()
             .asString();
 
-    assert response.contains("Workflow 'Sample Workflow' processed successfully!");
+    log.error(response);
+    assert response.contains("Workflow 'Task One,Task Two' processed successfully!");
+  }
+
+  @Test
+  void testCreateWorkflow_Debug() {
+    // 1. Perform the request but DO NOT assert status code yet
+    Response response =
+        given()
+            .log()
+            .uri() // Log the URL
+            .log()
+            .headers() // Log headers to check Content-Type
+            .log()
+            .body() // Log the YAML being sent
+            .header("Content-Type", "application/x-yaml")
+            .body(yamlBody2)
+            .when()
+            .post("/api/workflow/create")
+            .then()
+            .extract()
+            .response();
+
+    // 2. Check the status code manually
+    if (response.statusCode() != 200) {
+      // 3. If it failed, PRINT the response body to see the error
+      String responseBody = response.getBody().asString();
+
+      System.err.println("========================================");
+      System.err.println("TEST FAILED - SERVER RESPONSE:");
+      System.err.println(responseBody);
+      System.err.println("========================================");
+
+      // 4. Fail the test with a descriptive message
+      fail("Expected 200 OK but got " + response.statusCode() + ". Response body: " + responseBody);
+    }
+
+    // 5. If we get here, it passed
+    assertEquals(200, response.statusCode());
   }
 }

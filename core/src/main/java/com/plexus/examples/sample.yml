@@ -1,13 +1,17 @@
-project:
-namespace: com.plexus.examples
+workflow:
+  projectId: "123e4567-e89b-12d3-a456-426614174000"
+  projectName: "Sample Workflow"
+  projectNamespace: "sample_workflow"
+  tasks:
+    - taskId: "223e4567-e89b-12d3-a456-426614174001"
+      workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c11"
+      taskName: "Task One"
+      taskType: "TypeA"
 
-actions:
-  - name: cron
-    type: cron
-    schedule: "0 0 * * *"
+    - taskId: "323e4567-e89b-12d3-a456-426614174002"
+      workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c12"
+      taskName: "Task Two"
+      taskType: "TypeB"
 
-tasks:
-  - name: sampleTask
-    type: http_request
-    method: GET
-    url: "https://api.example.com/data"
+
+# Requires to insert records for users, projects, workflows, and tasks in the database
