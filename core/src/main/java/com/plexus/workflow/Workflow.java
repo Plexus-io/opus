@@ -1,5 +1,6 @@
 package com.plexus.workflow;
 
+import com.plexus.workflow.domain.model.tasks.Task;
 import java.util.List;
 import java.util.UUID;
 
