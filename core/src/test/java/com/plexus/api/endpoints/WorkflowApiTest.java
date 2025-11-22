@@ -37,6 +37,38 @@ class WorkflowApiTest {
                                              taskName: "Task Two"
                                              taskType: "TypeB"
       """;
+  String yamlBody1 =
+      """
+                  workflow:
+                                             projectId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b11"
+                                             projectName: "Sample Workflow"
+                                             projectNamespace: "sample_workflow"
+                                             tasks:
+                                               - taskId: "223e4567-e89b-12d3-a456-426614174003"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task One"
+                                                 taskType: "TypeA"
+                                               - taskId: "323e4567-e89b-12d3-a456-426614174004"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task Two"
+                                                 taskType: "TypeB"
+          """;
+  String yamlBody2 =
+      """
+                  workflow:
+                                             projectId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380b11"
+                                             projectName: "Sample Workflow"
+                                             projectNamespace: "sample_workflow"
+                                             tasks:
+                                               - taskId: "223e4567-e89b-12d3-a456-426614174005"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task One"
+                                                 taskType: "TypeA"
+                                               - taskId: "323e4567-e89b-12d3-a456-426614174006"
+                                                 workflowId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c14"
+                                                 taskName: "Task Two"
+                                                 taskType: "TypeB"
+          """;
 
   @BeforeEach
   void setupRestAssured() {
@@ -73,7 +105,7 @@ class WorkflowApiTest {
     String response =
         given()
             .header("Content-Type", "application/x-yaml")
-            .body(yamlBody)
+            .body(yamlBody1)
             .when()
             .post("/api/workflow/create")
             .then()
@@ -97,7 +129,7 @@ class WorkflowApiTest {
             .log()
             .body() // Log the YAML being sent
             .header("Content-Type", "application/x-yaml")
-            .body(yamlBody)
+            .body(yamlBody2)
             .when()
             .post("/api/workflow/create")
             .then()

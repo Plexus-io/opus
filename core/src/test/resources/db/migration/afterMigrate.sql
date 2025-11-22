@@ -1,4 +1,12 @@
-
+truncate table
+    users,
+    project,
+    workflow,
+    task_wf,
+    task_versioning,
+    metrics,
+    flyway_schema_history
+    RESTART IDENTITY CASCADE;
 -- Note: UUIDs are hardcoded here for demonstration.
 -- In a real application, you might use uuid_generate_v4() directly or
 -- capture the generated UUIDs from previous inserts (e.g., using RETURNING)
