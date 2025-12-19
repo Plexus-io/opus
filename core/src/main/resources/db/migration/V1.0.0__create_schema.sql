@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Users Table
 -- Stores user account information
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
                        user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                        email TEXT UNIQUE NOT NULL,
                        last_activity TIMESTAMPTZ,
@@ -15,7 +15,7 @@ CREATE TABLE users (
 
 -- 2. Project Table
 -- Stores projects, which are owned by users
-CREATE TABLE project (
+CREATE TABLE IF NOT EXISTS project (
                          project_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                          user_id UUID NOT NULL,
                          namespace TEXT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE project (
 
 -- 3. Workflow Table
 -- Stores workflow definitions, which belong to a project
-CREATE TABLE workflow (
+CREATE TABLE IF NOT EXISTS workflow (
                           workflow_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                           project_id UUID NOT NULL,
                           workflow_name TEXT NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE workflow (
 
 -- 4. Task Workflow Table (task_wf)
 -- Stores individual tasks that make up a workflow
-CREATE TABLE task_wf (
+CREATE TABLE IF NOT EXISTS task_wf (
                          task_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                          workflow_id UUID NOT NULL,
                          task_name TEXT NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE task_wf (
 
 -- 5. Task Versioning Table
 -- Stores different versions of a specific task
-CREATE TABLE task_versioning (
+CREATE TABLE IF NOT EXISTS task_versioning (
                                  version_id SERIAL PRIMARY KEY, -- 'int pk' auto-incrementing
                                  task_id UUID NOT NULL,
                                  version_name VARCHAR(100),
@@ -82,16 +82,21 @@ CREATE TABLE task_versioning (
 
 -- 6. Metrics/Logs Table
 -- Stores logs and metrics for each task execution
+DO $$
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'log_level') THEN
+            CREATE TYPE log_level AS ENUM (
+                'ERROR',
+                'WARN',
+                'INFO',
+                'DEBUG',
+                'TRACE'
+                );
+        END IF;
+    END
+$$;
 
-CREATE TYPE log_level AS ENUM (
-    'ERROR',
-    'WARN',
-    'INFO',
-    'DEBUG',
-    'TRACE'
-    );
-
-CREATE TABLE metrics (
+CREATE TABLE IF NOT EXISTS metrics (
                          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                          task_id UUID NOT NULL,
                          attempt_number INT DEFAULT 1,

@@ -32,7 +32,7 @@ public class WorkflowApi {
   @Path("/create")
   @Transactional
   // 👇 FIX: Add the standard YAML types
-  @Consumes({"application/yaml", "text/yaml", "application/x-yaml"})
+  @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.TEXT_PLAIN)
   public String createWorkflow(Parser parser) {
     log.info("Creating workflow");
