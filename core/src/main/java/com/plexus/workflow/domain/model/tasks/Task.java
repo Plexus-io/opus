@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "task_wf")
@@ -23,16 +25,16 @@ public class Task {
   @Column(name = "task_type")
   private String taskType;
 
-  //  TODO
-  //  @Column(name = "task_config")
-  //  private String taskConfig;
+  @Column(name = "task_config")
+  @JdbcTypeCode(SqlTypes.JSON)
+  private TaskConfig taskConfig;
 
   @Column(name = "task_status")
   private String taskStatus;
 
-  //  TODO
-  //  @Column(name = "retry_config")
-  //  private Json retryConfig;
+  @Column(name = "retry_config")
+  @JdbcTypeCode(SqlTypes.JSON)
+  private RetryConfig retryConfig;
 
   public UUID getTaskId() {
     return taskId;
@@ -50,20 +52,20 @@ public class Task {
     return taskType;
   }
 
-  //  public String getTaskConfig() {
-  //    return taskConfig;
-  //  }
-
   public String getTaskStatus() {
     return taskStatus;
   }
 
-  //  public String getRetryConfig() {
-  //    return retryConfig;
-  //  }
-
   public void setTaskId(UUID taskId) {
     this.taskId = taskId;
+  }
+
+  public TaskConfig getTaskConfig() {
+    return taskConfig;
+  }
+
+  public RetryConfig getRetryConfig() {
+    return retryConfig;
   }
 
   public void setWorkflowId(UUID workflowId) {
@@ -78,15 +80,15 @@ public class Task {
     this.taskType = taskType;
   }
 
-  //  public void setTaskConfig(String taskConfig) {
-  //    this.taskConfig = taskConfig;
-  //  }
-
   public void setTaskStatus(String taskStatus) {
     this.taskStatus = taskStatus;
   }
 
-  //  public void setRetryConfig(String retryConfig) {
-  //    this.retryConfig = retryConfig;
-  //  }
+  public void setTaskConfig(TaskConfig taskConfig) {
+    this.taskConfig = taskConfig;
+  }
+
+  public void setRetryConfig(RetryConfig retryConfig) {
+    this.retryConfig = retryConfig;
+  }
 }
