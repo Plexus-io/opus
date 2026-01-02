@@ -1,52 +1,70 @@
 package com.plexus.workflow.domain.features.http;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@ApplicationScoped
+// implement request here
 public class Client implements Request {
 
   private static final Logger log = LogManager.getLogger(Client.class);
 
-  private final URI uri;
   private final HttpClient httpClient;
-  private final HttpRequest httpRequest;
 
-  public Client(URI uri, HttpClient httpClient, HttpRequest httpRequest) {
-    this.uri = uri;
+  public Client(HttpClient httpClient) {
     this.httpClient = httpClient;
-    this.httpRequest = httpRequest;
   }
 
-  //    TODO
-  //      Change the return type into a class that you require this is from gpt as an example
-  //          also check how to handle exceptions for various status codes
+  /**
+   * @param bodyHandler
+   * @param uri
+   * @param <T>
+   * @return CompletableFuture<HttpResponse<T>>
+   * @throws Exception
+   * @apiNote
+   *     <p>The CompletableFuture must be handled in the caller method using .thenApply() which
+   *     requires a function to handle the response
+   */
   @Override
-  public <T> CompletableFuture<T> asyncObject(Class<T> type, int code) {
-    return httpClient
-        .sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
-        .thenApply(HttpResponse::body)
-        .thenApply(json -> fromJson(json, type));
+  public <T> CompletableFuture<HttpResponse<T>> genericGetAsyncObject(
+      HttpResponse.BodyHandler<T> bodyHandler, String uri) {
+    HttpRequest httpRequest = HttpRequest.newBuilder().uri(URI.create(uri)).GET().build();
+
+    //  This only sends a GET request and returns the response as a CompletableFuture
+    //  it should be then processed by the caller to extract the body using
+    // .thenApply(HttpResponse::body) in the caller method
+
+    return httpClient.sendAsync(httpRequest, bodyHandler);
   }
 
   @Override
-  public <T> CompletableFuture<T> asyncObject(Class<T> type) {
+  public <T> CompletableFuture<HttpResponse<T>> genericPostAsyncObject(
+      String jsonBody, String uri, HttpResponse.BodyHandler<T> bodyHandler) {
+    HttpRequest httpRequest =
+        HttpRequest.newBuilder()
+            .uri(URI.create(uri))
+            .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+            .build();
+    return httpClient.sendAsync(httpRequest, bodyHandler);
+  }
+
+  @Override
+  public <T> CompletableFuture<T> headersGetAsyncObject(
+      HttpResponse<T> response, String uri, Map<String, String> headers) {
     return null;
   }
 
-  //    TODO
-  //      Change this into a class that you require this is from gpt as an example
-
-  private <T> T fromJson(String json, Class<T> type) {
-    try {
-      return new ObjectMapper().readValue(json, type);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+  @Override
+  public <T> CompletableFuture<T> headersPostAsyncObject(
+      String jsonBody, String uri, Map<String, String> headers, HttpResponse<T> response)
+      throws Exception {
+    return null;
   }
 }
