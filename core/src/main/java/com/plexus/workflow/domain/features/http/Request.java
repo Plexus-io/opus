@@ -1,5 +1,7 @@
 package com.plexus.workflow.domain.features.http;
 
+import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public interface Request {
@@ -9,13 +11,25 @@ public interface Request {
   //          2. SetHeaders (Map<String, String> headers) age, expiry, content-type etc
   //          3. Method (HTTPMethod method) GET, POST, PUT, DELETE. By Default GET
 
-  // TODO
-  //    Check how to use java.net.http.HttpClient for making HTTP requests and body handling
-  //    for all HTTP methods and body types (JSON, XML, YAML, Form Data etc)
+  /**
+   * @param response
+   * @param uri
+   * @return CompletableFuture<T>
+   */
 
-  /** */
-  <T> CompletableFuture<T> asyncObject(Class<T> type, int code);
+  // methods
+  //      Or use HTTPRequest.BodyPublisher for jsonBody
 
-  /** */
-  <T> CompletableFuture<T> asyncObject(Class<T> type);
+  <T> CompletableFuture<HttpResponse<T>> genericGetAsyncObject(
+      HttpResponse.BodyHandler<T> bodyHandler, String uri) throws Exception;
+
+  <T> CompletableFuture<HttpResponse<T>> genericPostAsyncObject(
+      String jsonBody, String uri, HttpResponse.BodyHandler<T> bodyHandler) throws Exception;
+
+  <T> CompletableFuture<T> headersGetAsyncObject(
+      HttpResponse<T> response, String uri, Map<String, String> headers) throws Exception;
+
+  <T> CompletableFuture<T> headersPostAsyncObject(
+      String jsonBody, String uri, Map<String, String> headers, HttpResponse<T> response)
+      throws Exception;
 }

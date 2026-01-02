@@ -1,5 +1,6 @@
 package com.plexus.api.endpoints;
 
+import com.plexus.api.domain.ExecutionDTO;
 import com.plexus.api.domain.GenericResponse;
 import com.plexus.api.domain.WorkflowService;
 import com.plexus.parser.Parser;
@@ -52,6 +53,21 @@ public class WorkflowApi {
     }
     GenericResponse<Object> response = new GenericResponse<>(task, transactionId, message);
     workflowService.saveWorkflow(parser);
+    return Response.ok(response).header("X-transaction-id", transactionId).build();
+  }
+
+  @POST
+  @Path("/execute")
+  @Transactional
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response executeWorkflow(@HeaderParam("X-transaction-id") String transactionId, ExecutionDTO executionDTO)
+      throws IllegalArgumentException {
+
+    //    Return json with status of execution
+    //    executionStatus: IN_PROGRESS, COMPLETED, FAILED
+      workflowService.executeWorkflow(executionDTO.getTaskId(), executionDTO.getWorkflowId());
+    GenericResponse<Object> response = new GenericResponse<>(null, transactionId, "IN_PROGRESS");
     return Response.ok(response).header("X-transaction-id", transactionId).build();
   }
 }
