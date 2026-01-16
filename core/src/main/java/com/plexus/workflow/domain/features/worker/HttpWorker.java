@@ -1,5 +1,6 @@
 package com.plexus.workflow.domain.features.worker;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.plexus.workflow.domain.features.http.Client;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.net.http.HttpResponse;
@@ -30,6 +31,18 @@ public class HttpWorker {
         .exceptionally(
             e -> {
               log.error("Error performing GET request to {}: {}", uri, e.getMessage());
+              return null;
+            });
+  }
+
+  public CompletableFuture<String> performPostRequest(
+      HttpResponse.BodyHandler<String> handler, String uri, JsonNode jsonBody, String contentType) {
+    return httpClient
+        .genericPostAsyncObject(jsonBody, uri, handler, contentType)
+        .thenApply(HttpResponse::body)
+        .exceptionally(
+            e -> {
+              log.error("Error performing POST request to {}: {}", uri, e.getMessage());
               return null;
             });
   }

@@ -61,12 +61,13 @@ public class WorkflowApi {
   @Transactional
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response executeWorkflow(@HeaderParam("X-transaction-id") String transactionId, ExecutionDTO executionDTO)
+  public Response executeWorkflow(
+      @HeaderParam("X-transaction-id") String transactionId, ExecutionDTO executionDTO)
       throws IllegalArgumentException {
 
     //    Return json with status of execution
     //    executionStatus: IN_PROGRESS, COMPLETED, FAILED
-      workflowService.executeWorkflow(executionDTO.getTaskId(), executionDTO.getWorkflowId());
+    workflowService.executeWorkflow(executionDTO.getTaskId());
     GenericResponse<Object> response = new GenericResponse<>(null, transactionId, "IN_PROGRESS");
     return Response.ok(response).header("X-transaction-id", transactionId).build();
   }

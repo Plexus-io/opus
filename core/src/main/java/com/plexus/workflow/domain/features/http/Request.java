@@ -1,5 +1,6 @@
 package com.plexus.workflow.domain.features.http;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +25,8 @@ public interface Request {
       HttpResponse.BodyHandler<T> bodyHandler, String uri) throws Exception;
 
   <T> CompletableFuture<HttpResponse<T>> genericPostAsyncObject(
-      String jsonBody, String uri, HttpResponse.BodyHandler<T> bodyHandler) throws Exception;
+      JsonNode jsonBody, String uri, HttpResponse.BodyHandler<T> bodyHandler, String contentType)
+      throws Exception;
 
   <T> CompletableFuture<T> headersGetAsyncObject(
       HttpResponse<T> response, String uri, Map<String, String> headers) throws Exception;
