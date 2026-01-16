@@ -1,5 +1,6 @@
 package com.plexus.workflow.domain.features.http;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -46,11 +47,12 @@ public class Client implements Request {
 
   @Override
   public <T> CompletableFuture<HttpResponse<T>> genericPostAsyncObject(
-      String jsonBody, String uri, HttpResponse.BodyHandler<T> bodyHandler) {
+      JsonNode jsonBody, String uri, HttpResponse.BodyHandler<T> bodyHandler, String contentType) {
     HttpRequest httpRequest =
         HttpRequest.newBuilder()
             .uri(URI.create(uri))
-            .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+            .header("Content-Type", contentType)
+            .POST(HttpRequest.BodyPublishers.ofString(jsonBody.toString()))
             .build();
     return httpClient.sendAsync(httpRequest, bodyHandler);
   }
