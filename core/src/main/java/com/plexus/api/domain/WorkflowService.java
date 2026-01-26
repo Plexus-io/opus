@@ -3,6 +3,7 @@ package com.plexus.api.domain;
 import com.plexus.api.endpoints.WorkflowApi;
 import com.plexus.parser.Parser;
 import com.plexus.workflow.domain.features.redis.RedisPublisher;
+import com.plexus.workflow.domain.features.redis.RedisSubscriber;
 import com.plexus.workflow.domain.model.tasks.Task;
 import com.plexus.workflow.domain.model.tasks.TaskRepo;
 import jakarta.enterprise.context.ApplicationScoped;
