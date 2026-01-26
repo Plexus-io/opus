@@ -1,5 +1,6 @@
 package com.plexus.workflow.domain.model.tasks;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 
 public class TaskConfig {
@@ -12,6 +13,7 @@ public class TaskConfig {
     private String url;
     private Map<String, String> headers;
     private Map<String, String> queryParams;
+    private JsonNode body;
 
     public String getMethod() {
       return method;
@@ -29,6 +31,10 @@ public class TaskConfig {
       return queryParams;
     }
 
+    public JsonNode getBody() {
+      return body;
+    }
+
     public void setMethod(String method) {
       this.method = method;
     }
@@ -43,6 +49,10 @@ public class TaskConfig {
 
     public void setQueryParams(Map<String, String> queryParams) {
       this.queryParams = queryParams;
+    }
+
+    public void setBody(JsonNode body) {
+      this.body = body;
     }
   }
 
