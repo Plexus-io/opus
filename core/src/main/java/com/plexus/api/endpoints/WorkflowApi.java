@@ -67,8 +67,10 @@ public class WorkflowApi {
 
     //    Return json with status of execution
     //    executionStatus: IN_PROGRESS, COMPLETED, FAILED
-    workflowService.executeWorkflow(executionDTO.getTaskId());
-    GenericResponse<Object> response = new GenericResponse<>(null, transactionId, "IN_PROGRESS");
+    workflowService.executeWorkflow(executionDTO.getTaskId(), executionDTO.getWorkflowId());
+    log.info(executionDTO.getWorkflowId(), executionDTO.getTaskId(), executionDTO.getMode());
+    GenericResponse<Object> response =
+        new GenericResponse<>(null, executionDTO.getWorkflowId(), "IN_PROGRESS");
     return Response.ok(response).header("X-transaction-id", transactionId).build();
   }
 }
